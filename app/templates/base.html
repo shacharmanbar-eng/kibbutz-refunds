@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>{% block title %}החזר קל{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="{{ url_for('views.home') }}">החזר קל</a>
+    {% if g.user %}
+    <nav>
+      <a href="{{ url_for('views.history') }}">היסטוריה</a>
+      <a href="{{ url_for('views.settings') }}">הגדרות</a>
+      {% if g.user.role == 'admin' %}<a href="{{ url_for('views.admin') }}">ניהול</a>{% endif %}
+      <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <button class="link">יציאה</button>
+      </form>
+    </nav>
+    {% endif %}
+  </header>
+  <main>
+    {% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

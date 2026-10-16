@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>היסטוריה</h1>
+{% if rows %}
+<ul class="list">
+  {% for q in rows %}
+  <li><a href="{{ url_for('views.request_view', request_id=q.id) }}">
+    בקשה {{ q.id }} · {{ q.n }} קבלות · {{ q.sent_at or q.approved_at }}
+    <span class="badge s-{{ q.status }}">{{ q.status|status }}</span>
+  </a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">עוד אין בקשות שאושרו.</p>
+{% endif %}
+{% endblock %}

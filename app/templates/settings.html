@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>הגדרות</h1>
+<form method="post" class="card stack">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <label>שם מלא <input name="full_name" value="{{ g.user.full_name }}" required></label>
+  <button class="primary">שמירה</button>
+</form>
+<div class="card">
+  <b>חיבור Gmail לשליחה:</b> טרם זמין. עד שהוא ייבנה, בקשות מאושרות נשמרות ואינן נשלחות.
+</div>
+{% endblock %}

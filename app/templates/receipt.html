@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>קבלה</h1>
+<div class="preview card">
+  {% if r.mime.startswith('image/') and r.mime != 'image/heic' %}
+    <img src="{{ url_for('views.receipt_file', receipt_id=r.id) }}" alt="תמונת הקבלה">
+  {% else %}
+    <a href="{{ url_for('views.receipt_file', receipt_id=r.id) }}" target="_blank">פתח את הקובץ: {{ r.original_name }}</a>
+  {% endif %}
+</div>
+
+{% if req %}<p>צורפה ל<a href="{{ url_for('views.request_view', request_id=req.id) }}">בקשה {{ req.id }}</a>.</p>{% endif %}
+
+<form method="post" class="card stack">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <fieldset {% if locked %}disabled{% endif %} class="stack">
+    <label>סכום (₪)
+      <input name="amount" inputmode="decimal" required value="{{ '%.2f'|format(r.amount) if r.amount is not none else '' }}" dir="ltr">
+    </label>
+    <label>סוג הוצאה
+      <select name="category" required>
+        <option value="">בחר…</option>
+        {% for c in categories %}<option {% if r.category == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>תיאור (חובה בסוג ״אחר״)
+      <input name="description" value="{{ r.description }}" maxlength="300">
+    </label>
+    <button class="primary">שמירה</button>
+  </fieldset>
+</form>
+
+{% if not req and r.status != 'submitted' %}
+<form method="post" action="{{ url_for('views.delete_receipt', receipt_id=r.id) }}">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <button class="danger">מחיקת הקבלה</button>
+</form>
+{% endif %}
+{% endblock %}

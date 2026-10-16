@@ -1,0 +1,110 @@
+:root {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --text: #1c2321;
+  --muted: #5f6b67;
+  --border: #d9dedb;
+  --accent: #0f766e;
+  --accent-text: #ffffff;
+  --warn-bg: #fff4d6;
+  --danger: #b42318;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121615;
+    --surface: #1b211f;
+    --text: #e8ecea;
+    --muted: #9aa6a1;
+    --border: #2e3633;
+    --accent: #2dd4bf;
+    --accent-text: #062a26;
+    --warn-bg: #3a3014;
+    --danger: #f97066;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.5 system-ui, "Segoe UI", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+main { max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+h1 { font-size: 1.5rem; margin: 8px 0 16px; }
+h2 { font-size: 1.15rem; margin: 28px 0 10px; }
+a { color: var(--accent); }
+
+.top {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.brand { font-weight: 700; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+.top nav { display: flex; gap: 14px; align-items: center; font-size: 0.95rem; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin: 12px 0;
+}
+.card.warn { background: var(--warn-bg); }
+.stack { display: flex; flex-direction: column; gap: 14px; border: 0; padding: 0; margin: 0; }
+.card.stack { padding: 16px; border: 1px solid var(--border); margin: 12px 0; }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
+
+input, select, button, .big {
+  font: inherit; font-size: 16px; /* 16px stops iOS zoom on focus */
+}
+input:not([type=checkbox]), select {
+  width: 100%; padding: 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+button, .big {
+  min-height: 48px; padding: 10px 18px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  cursor: pointer; font-weight: 600;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.primary { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+.danger { color: var(--danger); background: transparent; margin-top: 12px; }
+.wide { width: 100%; margin-top: 12px; }
+button.link {
+  background: none; border: 0; padding: 0; min-height: 0;
+  color: var(--accent); font-weight: 400; font-size: inherit; text-decoration: underline;
+}
+form.inline { display: inline; }
+
+.actions { display: grid; gap: 12px; }
+.big {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 72px; font-size: 1.2rem; width: 100%;
+}
+.big.primary { border: 0; }
+
+.list { list-style: none; padding: 0; margin: 0; }
+.list li {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; margin-bottom: 8px; padding: 14px;
+}
+.list li > a { display: block; text-decoration: none; color: var(--text); }
+.list.small li { padding: 10px 14px; font-size: 0.95rem; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row input[type=checkbox] { width: 22px; height: 22px; flex: none; }
+.grow { flex: 1; }
+
+.badge {
+  display: inline-block; font-size: 0.8rem; padding: 2px 10px; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+  margin-inline-start: 6px; font-weight: 500;
+}
+.s-sent, .s-ready { color: var(--accent); border-color: var(--accent); }
+.s-failed, .s-unknown, .s-needs_input { color: var(--danger); border-color: var(--danger); }
+
+.flash { background: var(--warn-bg); border-radius: 10px; padding: 10px 14px; margin: 8px 0; }
+.muted { color: var(--muted); font-size: 0.95rem; }
+.preview img { max-width: 100%; border-radius: 8px; display: block; }
+.mail pre { white-space: pre-wrap; font: inherit; margin: 12px 0; }
+.break { word-break: break-all; }

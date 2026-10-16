@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>בקשה {{ req.id }} <span class="badge s-{{ req.status }}">{{ req.status|status }}</span></h1>
+
+{% if req.status == 'unknown' %}
+<div class="card warn">לא ברור אם המייל נשלח. כדי לא לשלוח פעמיים, הבקשה לא תישלח שוב אוטומטית. בדוק בתיקיית ״דואר יוצא״ ב־Gmail.</div>
+{% elif req.status == 'sent' %}
+<div class="card">נשלח ב־{{ req.sent_at }}. ״נשלח״ אינו אומר שהזיכוי אושר.</div>
+{% endif %}
+
+<h2>קבלות</h2>
+<ul class="list">
+  {% for r in receipts %}
+  <li class="row">
+    <a href="{{ url_for('views.receipt', receipt_id=r.id) }}" class="grow">
+      {{ r.category or 'ללא סיווג' }} · {{ r|money }}{% if r.category == 'אחר' %} · {{ r.description }}{% endif %}
+    </a>
+    {% if req.status in ('draft', 'held', 'failed') %}
+    <form method="post" action="{{ url_for('views.remove_from_request', request_id=req.id, receipt_id=r.id) }}" class="inline">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <button class="link">הסר</button>
+    </form>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+<h2>המייל</h2>
+<div class="card mail">
+  <div><b>אל:</b> <bdi dir="ltr">{{ message.to or '— לא הוגדר —' }}</bdi></div>
+  <div><b>העתק:</b> <bdi dir="ltr">{{ message.cc }}</bdi></div>
+  <div><b>נושא:</b> {{ message.subject }}</div>
+  <pre>{{ message.body }}</pre>
+  <div class="muted">{{ receipts|length }} קבצים מצורפים</div>
+</div>
+
+{% if req.status in ('draft', 'held', 'failed') %}
+  {% for p in problems %}<div class="flash">{{ p }}</div>{% endfor %}
+  <form method="post" action="{{ url_for('views.approve', request_id=req.id) }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="hash" value="{{ message.hash }}">
+    <button class="primary wide" {% if problems %}disabled{% endif %}
+            onclick="this.disabled=true; this.form.submit();">
+      {{ 'אישור ושליחה' if req.status == 'draft' else 'אישור ושליחה מחדש' }}
+    </button>
+  </form>
+{% endif %}
+
+{% if attempts %}
+<h2>ניסיונות שליחה</h2>
+<ul class="list small">
+  {% for a in attempts %}<li>{{ a.at }} · {{ a.result }}{% if a.detail %} · {{ a.detail }}{% endif %}</li>{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

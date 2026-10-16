@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="actions">
+  <form method="post" action="{{ url_for('views.upload_receipt') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="source" value="camera">
+    <label class="big primary">
+      📷 צלם קבלה
+      <input type="file" name="file" accept="image/*" capture="environment" onchange="this.form.submit()" hidden>
+    </label>
+  </form>
+  <form method="post" action="{{ url_for('views.upload_receipt') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="source" value="upload">
+    <label class="big">
+      📎 העלה קבלה
+      <input type="file" name="file" accept="image/*,application/pdf" onchange="this.form.submit()" hidden>
+    </label>
+  </form>
+  <p class="muted">קבלה שהגיעה במייל: שמור אותה לטלפון והעלה כאן.</p>
+</section>
+
+{% if pending %}
+<h2>בקשות פתוחות</h2>
+<ul class="list">
+  {% for q in pending %}
+  <li><a href="{{ url_for('views.request_view', request_id=q.id) }}">
+    בקשה {{ q.id }} · {{ q.n }} קבלות <span class="badge s-{{ q.status }}">{{ q.status|status }}</span>
+  </a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>קבלות שלא צורפו לבקשה</h2>
+{% if loose %}
+<form method="post" action="{{ url_for('views.create_request') }}">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <ul class="list">
+    {% for r in loose %}
+    <li class="row">
+      <input type="checkbox" name="receipt_ids" value="{{ r.id }}" {% if r.status != 'ready' %}disabled{% else %}checked{% endif %} aria-label="בחר קבלה">
+      <a href="{{ url_for('views.receipt', receipt_id=r.id) }}" class="grow">
+        {{ r.category or 'ללא סיווג' }} · {{ r|money }}
+        <span class="badge s-{{ r.status }}">{{ r.status|status }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  <button class="primary wide">הכן בקשה מהקבלות המסומנות</button>
+</form>
+{% else %}
+<p class="muted">אין קבלות ממתינות.</p>
+{% endif %}
+{% endblock %}

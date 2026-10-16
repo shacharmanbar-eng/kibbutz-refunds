@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>ניהול</h1>
+
+<h2>יעד השליחה</h2>
+<form method="post" class="card stack">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <input type="hidden" name="action" value="settings">
+  <label>כתובת בדיקה <input type="email" name="test_email" value="{{ test_email }}" dir="ltr"></label>
+  <label>כתובת הנהלת החשבונות <input type="email" name="accounting_email" value="{{ accounting_email }}" dir="ltr"></label>
+  <label>מצב
+    <select name="target_mode">
+      <option value="test" {% if target_mode == 'test' %}selected{% endif %}>בדיקה (נשלח לכתובת הבדיקה)</option>
+      <option value="live" {% if target_mode == 'live' %}selected{% endif %}>אמת (נשלח להנהלת החשבונות)</option>
+    </select>
+  </label>
+  <button class="primary">שמירה</button>
+</form>
+<p>יעד נוכחי: <bdi dir="ltr">{{ target or '— לא הוגדר —' }}</bdi></p>
+
+<h2>הזמנת משתתף</h2>
+<form method="post" class="card stack">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <input type="hidden" name="action" value="invite">
+  <label>מייל <input type="email" name="email" required dir="ltr"></label>
+  <button>יצירת קישור הזמנה</button>
+</form>
+{% if invite_link %}
+<div class="card">שלח למוזמן את הקישור (חד־פעמי):<br><bdi dir="ltr" class="break">{{ invite_link }}</bdi></div>
+{% endif %}
+
+<h2>משתמשים</h2>
+<ul class="list small">
+  {% for u in users %}
+  <li><bdi dir="ltr">{{ u.email }}</bdi> · {{ u.full_name or '—' }} · {{ 'מנהל' if u.role == 'admin' else 'חבר' }} · {{ 'פעיל' if u.invite_status == 'active' else 'הוזמן' }}</li>
+  {% endfor %}
+</ul>
+
+<h2>מצב תפעולי</h2>
+<ul class="list small">
+  {% for c in counts %}<li>{{ c.status|status }}: {{ c.n }}</li>{% else %}<li>אין בקשות</li>{% endfor %}
+</ul>
+<p class="muted">עמוד הניהול לא מציג תוכן קבלות של משתמשים.</p>
+{% endblock %}
